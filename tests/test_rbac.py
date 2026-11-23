@@ -8,7 +8,7 @@ def test_active_employee_is_eligible():
     result = evaluate_employee_access("EMP001")
 
     assert result["decision"] == "ELIGIBLE"
-    assert len(result["authorized_groups"]) == 4
+    assert set(g["group_name"] for g in result["authorized_groups"]) == {"GG-DEPT-IT-BASE", "GG-IAM-Users"}
 
 
 def test_onboarding_employee_is_denied():
@@ -58,3 +58,4 @@ def test_policy_engine_denies_sod_conflict():
     assert result["decision"] == "DENY"
     assert result["reason"] == "Separation-of-duties violation"
     assert len(result["violations"]) == 1
+

@@ -29,10 +29,10 @@ def test_enterprise_identity_data():
             assert cur.fetchone()[0] == 50
 
             cur.execute("SELECT COUNT(*) FROM access_groups")
-            assert cur.fetchone()[0] == 300
+            assert cur.fetchone()[0] == 310
 
             cur.execute("SELECT COUNT(*) FROM role_entitlements")
-            assert cur.fetchone()[0] == 40
+            assert cur.fetchone()[0] == 10
 
             cur.execute("""
                 SELECT COUNT(*)
@@ -43,3 +43,30 @@ def test_enterprise_identity_data():
             """)
 
             assert cur.fetchone()[0] == 0
+
+
+
+def test_department_baseline_entitlements():
+    """Verify department baseline access follows lab policy."""
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    COUNT(*),
+                    COUNT(*) FILTER (
+                        WHERE g.is_privileged = TRUE
+                    ),
+                    COUNT(*) FILTER (
+                        WHERE g.group_name NOT LIKE 'GG-DEPT-%-BASE'
+                    )
+                FROM department_entitlements de
+                JOIN access_groups g
+                    ON de.group_id = g.group_id
+            """)
+
+            total, privileged, nonbaseline = cur.fetchone()
+
+            assert total == 10
+            assert privileged == 0
+            assert nonbaseline == 0

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 78wXtGbvOtXO5d70btmtDjw4eokT62SOhQCB29Y80fg9pPHcTPAobWBqcbA50IR
+\restrict uyM0H2uU6gdp3S75EWw0Iv90MoAw78WTedmLq9caCukpaHjcljWiKwswpFBiG7P
 
 -- Dumped from database version 17.12
 -- Dumped by pg_dump version 17.12
@@ -55,6 +55,38 @@ CREATE SEQUENCE public.access_groups_group_id_seq
 --
 
 ALTER SEQUENCE public.access_groups_group_id_seq OWNED BY public.access_groups.group_id;
+
+
+--
+-- Name: department_entitlements; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.department_entitlements (
+    department_entitlement_id integer NOT NULL,
+    department_id integer NOT NULL,
+    group_id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: department_entitlements_department_entitlement_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.department_entitlements_department_entitlement_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: department_entitlements_department_entitlement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.department_entitlements_department_entitlement_id_seq OWNED BY public.department_entitlements.department_entitlement_id;
 
 
 --
@@ -241,6 +273,13 @@ ALTER TABLE ONLY public.access_groups ALTER COLUMN group_id SET DEFAULT nextval(
 
 
 --
+-- Name: department_entitlements department_entitlement_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.department_entitlements ALTER COLUMN department_entitlement_id SET DEFAULT nextval('public.department_entitlements_department_entitlement_id_seq'::regclass);
+
+
+--
 -- Name: departments department_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -289,6 +328,22 @@ ALTER TABLE ONLY public.access_groups
 
 ALTER TABLE ONLY public.access_groups
     ADD CONSTRAINT access_groups_pkey PRIMARY KEY (group_id);
+
+
+--
+-- Name: department_entitlements department_entitlements_department_id_group_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.department_entitlements
+    ADD CONSTRAINT department_entitlements_department_id_group_id_key UNIQUE (department_id, group_id);
+
+
+--
+-- Name: department_entitlements department_entitlements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.department_entitlements
+    ADD CONSTRAINT department_entitlements_pkey PRIMARY KEY (department_entitlement_id);
 
 
 --
@@ -380,6 +435,22 @@ ALTER TABLE ONLY public.role_entitlements
 
 
 --
+-- Name: department_entitlements department_entitlements_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.department_entitlements
+    ADD CONSTRAINT department_entitlements_department_id_fkey FOREIGN KEY (department_id) REFERENCES public.departments(department_id);
+
+
+--
+-- Name: department_entitlements department_entitlements_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.department_entitlements
+    ADD CONSTRAINT department_entitlements_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.access_groups(group_id);
+
+
+--
 -- Name: employees employees_department_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -431,5 +502,5 @@ ALTER TABLE ONLY public.role_entitlements
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 78wXtGbvOtXO5d70btmtDjw4eokT62SOhQCB29Y80fg9pPHcTPAobWBqcbA50IR
+\unrestrict uyM0H2uU6gdp3S75EWw0Iv90MoAw78WTedmLq9caCukpaHjcljWiKwswpFBiG7P
 
